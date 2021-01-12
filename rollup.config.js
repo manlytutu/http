@@ -10,12 +10,13 @@
  * rollup-plugin-serve: 类比 webpack-dev-server, 提供静态服务器能力
  */
 
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import babel from 'rollup-plugin-babel';
-import pkg from './package.json';
-import path from 'path';
-import merge from 'lodash.merge';
+import nodeResolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import babel from 'rollup-plugin-babel'
+import pkg from './package.json'
+import path from 'path'
+import merge from 'lodash.merge'
+import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 const dealPath= function(...args){
     return path.resolve(__dirname, ...args)
@@ -24,9 +25,9 @@ const dealPath= function(...args){
 const jobs = {
     umd:{
         output:{
-            name:'bndle',
             file: path.resolve(pkg.browser),
-            format:'umd'
+            format:'umd',
+            globals:{ axios: "axios" }
         } 
     },
     cjs:{
@@ -49,19 +50,19 @@ const mergeConfig = jobs[process.env.FORMAT || 'esm'];
 
 const extensions = ['.js', '.ts'];
 export default merge({   
-    input: dealPath('./src/main.ts'),
+    input: dealPath('./src/index.ts'),
+    external: ["axios"],
     output:{
-        name:'bndle',
+        name:'tuHttp'
     },
     plugins: [
-        resolve({
-            extensions,
-            modulesOnly: true,
-        }), // so Rollup can find `ms`
-        commonjs(), // so Rollup can convert `ms` to an ES module
-        babel({
-            exclude: 'node_modules/**',
-            extensions,
-        }),
+      nodeResolve(), 
+      nodePolyfills(),
+      commonjs(),
+      babel({
+          exclude: 'node_modules/**',
+          extensions,
+          runtimeHelpers:true,
+      })
     ]
 },mergeConfig)
