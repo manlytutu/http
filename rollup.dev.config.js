@@ -13,48 +13,15 @@
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import babel from 'rollup-plugin-babel'
-import pkg from './package.json'
-import path from 'path'
 import merge from 'lodash.merge'
 import nodePolyfills from 'rollup-plugin-node-polyfills';
-
-const dealPath= function(...args){
-    return path.resolve(__dirname, ...args)
-}
-// 打包任务的个性化配置
-const jobs = {
-    umd:{
-        output:{
-            file: path.resolve(pkg.browser),
-            format:'umd',
-            globals:{ axios: "axios" }
-        } 
-    },
-    cjs:{
-        output:{
-            file: path.resolve(pkg.main),
-            format:'cjs'
-        }
-
-    },
-    esm:{
-        output:{
-            file: path.resolve(pkg.module),
-            format:'esm'
-        }
-    }
-}
-// 从环境变量获取打包特征
-const mergeConfig = jobs[process.env.FORMAT || 'esm'];
+import serve from 'rollup-plugin-serve';
+import livereload from 'rollup-plugin-livereload';
+import baseConfig from './rollup.base.config'
 
 
 const extensions = ['.js', '.ts'];
-export default merge({   
-    input: dealPath('./src/index.ts'),
-    external: ["axios"],
-    output:{
-        name:'tuHttp'
-    },
+export default merge(baseConfig, {   
     plugins: [
       nodeResolve(), 
       nodePolyfills(),
@@ -63,6 +30,13 @@ export default merge({
           exclude: 'node_modules/**',
           extensions,
           runtimeHelpers:true,
+      }),
+      livereload(),
+      serve({
+        host:'10.8.27.168',
+        port: 4000,
+        openPage: './index.html', // 打开的页面
+        contentBase: ''
       })
     ]
-},mergeConfig)
+})

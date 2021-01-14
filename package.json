@@ -9,12 +9,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist types",
     "declaration": "tsc -d --emitDeclarationOnly --outDir types",
-    "dev": "npm run clean && rollup -w -c --environment FORMAT:esm",
-    "build:esm": "rollup -c  --environment FORMAT:esm",
-    "build:umd": "rollup -c  --environment FORMAT:umd",
-    "build:cjs": "rollup -c --environment FORMAT:cjs",
+    "build:esm": "rollup --environment FORMAT:esm --config ./rollup.base.config.js ",
+    "build:umd": "rollup --environment FORMAT:umd --config ./rollup.base.config.js ",
+    "build:cjs": "rollup --environment FORMAT:cjs --config ./rollup.base.config.js ",
     "build": "npm run clean && npm run declaration && npm run build:esm && npm run build:umd && npm run build:cjs",
-    "lint": "eslint 'src/**/*.{js,ts}'"
+    "lint": "eslint 'src/**/*.{js,ts}'",
+    "mock": "node ./mock/mockServer.js",
+    "serve": "npm run clean && npm run declaration && rollup -w --config ./rollup.dev.config.js"
   },
   "husky": {
     "hooks": {
@@ -43,12 +44,18 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "eslint": "^7.17.0",
     "husky": "^4.3.7",
+    "koa": "^2.13.1",
+    "koa-cors": "^0.0.16",
+    "koa-router": "^10.0.0",
     "lint-staged": "^10.5.3",
     "lodash.merge": "^4.6.2",
+    "mockjs": "^1.1.0",
     "prettier": "^2.2.1",
     "rollup": "^2.36.1",
     "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-livereload": "^2.0.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
+    "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-uglify": "^6.0.4",
     "typescript": "^4.1.3"
   },
