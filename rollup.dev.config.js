@@ -10,27 +10,15 @@
  * rollup-plugin-serve: 类比 webpack-dev-server, 提供静态服务器能力
  */
 
-import nodeResolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
-import babel from 'rollup-plugin-babel'
+
 import merge from 'lodash.merge'
-import nodePolyfills from 'rollup-plugin-node-polyfills';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import baseConfig from './rollup.base.config'
 
-
 const extensions = ['.js', '.ts'];
 export default merge(baseConfig, {   
     plugins: [
-      nodeResolve(), 
-      nodePolyfills(),
-      commonjs(),
-      babel({
-          exclude: 'node_modules/**',
-          extensions,
-          runtimeHelpers:true,
-      }),
       livereload(),
       serve({
         host:'10.8.27.168',

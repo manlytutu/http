@@ -8,30 +8,35 @@
   <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.0/axios.min.js"></script>
   <script src="./dist/tuHttp.umd.js"></script>
   <script type="text/javascript">
-    console.log(tuHttp)
-    tuHttp.Instance.get({
-      url: 'http://localhost:3000/',
-      contentType: 'application/json;charset=utf-8',
-    }).then(function(res){
-     console.log(res)
-    }).catch(function(err){
-      console.log(err)
-    })
+    // console.log(tuHttp)
+    // tuHttp.Instance.get({
+    //   baseURL:'http://localhost:3000',
+    //   url: '/',
+    //   contentType: 'application/json;charset=utf-8',
+    //   cache:false
+    // }).then(function(res){
+    //   return res
+    // }).catch(function(err){
+    //   return err
+    // })
 
 
 
     tuHttp.Instance.post({
-      url: 'http://localhost:3000/goods',
+      baseURL:'http://localhost:3000',
+      url: '/goods',
       contentType: 'application/json;charset=utf-8',
+      cache:true,
+      cacheTime:1000*3,//缓存3分钟
       data:{
         account:888,
         pwd:'abc123'
       }
     }).then(function(res){
-      console.log(res)
+      return res
      
     }).catch(function(err){
-      console.log(err)
+      return err
      
     })
   </script>

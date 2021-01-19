@@ -12,11 +12,11 @@
 
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
+import esbuild from "rollup-plugin-esbuild";
 import babel from 'rollup-plugin-babel'
 import pkg from './package.json'
 import path from 'path'
 import merge from 'lodash.merge'
-import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 const dealPath= function(...args){
     return path.resolve(__dirname, ...args)
@@ -27,7 +27,7 @@ const jobs = {
         output:{
             file: path.resolve(pkg.browser),
             format:'umd',
-            globals:{ axios: "axios" }
+            globals:{ axios: "axios",crypto:"crypto" }
         } 
     },
     cjs:{
@@ -51,18 +51,23 @@ const mergeConfig = jobs[process.env.FORMAT || 'umd'];
 const extensions = ['.js', '.ts'];
 export default merge({   
     input: dealPath('./src/index.ts'),
-    external: ["axios"],
+    external: ["axios","crypto"],
     output:{
         name:'tuHttp'
     },
     plugins: [
       nodeResolve(), 
-      nodePolyfills(),
       commonjs(),
+      esbuild({
+        include: /\.[jt]s?$/,
+        exclude: /node_modules/,
+        minify: true,
+      }),
       babel({
           exclude: 'node_modules/**',
           extensions,
           runtimeHelpers:true,
-      })
+      }),
+     
     ]
 },mergeConfig)

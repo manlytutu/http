@@ -6,3 +6,4 @@ declare class Instance {
     static delete(req: any): Promise<object>;
 }
 export { Instance };
+//# sourceMappingURL=index.d.ts.map
