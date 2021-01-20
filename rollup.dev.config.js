@@ -16,7 +16,6 @@ import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import baseConfig from './rollup.base.config'
 
-const extensions = ['.js', '.ts'];
 export default merge(baseConfig, {   
     plugins: [
       livereload(),
