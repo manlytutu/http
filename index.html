@@ -12,8 +12,10 @@
     // tuHttp.Instance.get({
     //   baseURL:'http://localhost:3000',
     //   url: '/',
-    //   contentType: 'application/json;charset=utf-8',
-    //   cache:false
+    //   cache:false,
+    //   data:{
+    //     'haha':'111'
+    //   }
     // }).then(function(res){
     //   return res
     // }).catch(function(err){
@@ -25,11 +27,10 @@
     tuHttp.Instance.post({
       baseURL:'http://localhost:3000',
       url: '/goods',
-      contentType: 'application/json;charset=utf-8',
       cache:true,
-      cacheTime:1000*3,//缓存3分钟
+      cacheTime:1000*3,//缓存3秒
       data:{
-        account:888,
+        account:'888',
         pwd:'abc123'
       }
     }).then(function(res){

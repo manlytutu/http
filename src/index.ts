@@ -1,15 +1,38 @@
-import axios from 'axios';
+import axios,{AxiosRequestConfig, AxiosResponse,} from 'axios';
 import Qs from 'qs';
 import Storage from './storage'
 import CryptoHelper from './encryption'
 const storage = new Storage();
 const cryptoHelper = new CryptoHelper('cacheKey');
-//使用自定义配置新建一个 axios 实例
-const instance = axios.create()
+
+// instance.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded'
 const CANCELTTYPE = {
   CACHE: 1,
   REPEAT: 2,
 };
+// 请求通用配置.
+const axiosConfig: AxiosRequestConfig = {
+  // 请求后的数据处理
+  transformResponse: [
+    (data: AxiosResponse) => {
+      return data;
+    }
+  ],
+  transformRequest: [
+    function (data) {
+      let ret = "";
+      for (let it in data) {
+        ret +=
+          encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
+      }
+      ret = ret.substring(0, ret.lastIndexOf("&"));
+      return ret;
+    }
+  ],
+  responseType: "json",
+};
+//使用自定义配置新建一个 axios 实例
+const instance = axios.create(axiosConfig)
 
 instance.interceptors.request.use(function (req:Record<string,any>) {
   console.log(1,req)
@@ -71,15 +94,15 @@ class Instance {
   }
   public static post(req:any):Promise<object>{
     const{url,data,baseURL,cache,cacheTime} = req
-    return this.request({method:"POST",url,params:data,baseURL,cache,cacheTime});
+    return this.request({method:"POST",url,data:data||{},baseURL,cache,cacheTime});
   }
   public static put(req:any):Promise<object>{
     const{url,data,baseURL,cache,cacheTime} = req
-    return this.request({method:"PUT",url,params:data,baseURL,cache,cacheTime});
+    return this.request({method:"PUT",url,data:data,baseURL,cache,cacheTime});
   }
   public static delete(req:any):Promise<object>{
     const{url,data,baseURL,cache,cacheTime} = req
-    return this.request({method:"DELETE",url,params:data,baseURL,cache,cacheTime});
+    return this.request({method:"DELETE",url,data:data,baseURL,cache,cacheTime});
   }
 }
 
