@@ -1,30 +1,27 @@
 class Storage {
-  public get(key: string | undefined) {
-      if (!key) { return; }
-      const text = localStorage.getItem(key);
-      try {
-          if (text) {
-              return JSON.parse(text);
-          } else {
-              localStorage.removeItem(key);
-              return null;
-          }
-      } catch {
-          localStorage.removeItem(key);
-          return null;
+  public set(realKeyObj:any, realValueObj: any) {
+    if (typeof realKeyObj == 'string') {
+      localStorage.setItem(realKeyObj, JSON.stringify(realValueObj));
+    }
+    if (typeof realKeyObj == 'object') {
+      for (var j = 0; j < realKeyObj.length; j++) {
+        localStorage.setItem(realKeyObj[j], JSON.stringify(realValueObj[j]));
       }
+    }
   }
-  public set(key: string | undefined, data: any) {
-      if (!key) {
-          return;
-      }
-      localStorage.setItem(key, JSON.stringify(data));
+  public get(realKey: any) {
+    //@ts-ignore
+    return JSON.parse(localStorage.getItem(realKey))
   }
-  public remove(key: string | undefined) {
-      if (!key) {
-          return;
+  public remove(realKeyObj: any) {
+    if (typeof realKeyObj == 'string') {
+      localStorage.removeItem(realKeyObj);
+    }
+    if (typeof realKeyObj == 'object') {
+      for (var i = 0; i < realKeyObj.length; i++) {
+        localStorage.removeItem(realKeyObj[i]);
       }
-      localStorage.removeItem(key);
+    }
   }
 }
 

@@ -2,10 +2,10 @@ import axios from 'axios';
 import Qs from 'qs';
 import Storage from './storage'
 import CryptoHelper from './encryption'
+import { checkParams } from './checkParams';
 const storage = new Storage();
 const cryptoHelper = new CryptoHelper('cacheKey');
 
-// instance.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded'
 const CANCELTTYPE = {
   CACHE: 1,
   REPEAT: 2,
@@ -15,18 +15,30 @@ const CANCELTTYPE = {
 const instance = axios.create()
 
 instance.interceptors.request.use(function (req:Record<string,any>) {
-  console.log(1,req)
-  //为每一次请求生成一个cancelToken
   const source = axios.CancelToken.source();
   req.cancelToken = source.token
+  //todo 请求入参校验
+  var checkParamsFlag = checkParams(req);
+  if(!checkParamsFlag){
+    source.cancel()
+  }
+
+  //done 请求数据缓存
+  /**
+   * 为每一次请求生成一个cancelToken
+   * 尝试获取缓存数据
+   * 判断是否缓存命中，缓存是否过期
+   * 缓存未过期，将缓存数据通过cancle方法回传给请求方法
+   */
+
   //获取缓存数据
   let data
   if(req.cache){
     data = storage.get(cryptoHelper.encrypt(req.url + req.data + (req.method || '')));
-    console.log(2,data)
+    // console.log(2,data)
   }
   //判断是否缓存命中，缓存是否过期
-  if(data && (Date.now() <= data.experies)){ //缓存未过期
+  if(data && (Date.now() <= data.expiries)){ //缓存未过期
     console.log('migzhong')
     //缓存未过期，将缓存数据通过cancle方法回传给请求方法
     source.cancel(JSON.stringify({
@@ -34,11 +46,6 @@ instance.interceptors.request.use(function (req:Record<string,any>) {
       data: data.data,
     }));
   }
-  // if((Date.now() > data.experies)) {
-  //   console.log('清除缓存。');
-  //   storage.remove(cryptoHelper.encrypt(req.url + req.data + (req.method || '')));
-  // }
-  
   return req;
 }, function (error: any) {
   
@@ -47,7 +54,7 @@ instance.interceptors.request.use(function (req:Record<string,any>) {
 
 
 instance.interceptors.response.use(function (res:any) {
-  console.log(3,res)
+  // console.log(3,res)
   if(res.data && res.data.code ==200){
     if(res.config && res.config.cache){
         if(!res.config.cacheTime){
@@ -55,7 +62,7 @@ instance.interceptors.response.use(function (res:any) {
         }
         storage.set(cryptoHelper.encrypt(res.config.url + res.config.data + (res.config.method || '')), {
           data: res.data.resData, // 响应体数据
-          experies: Date.now() + res.config.cacheTime, // 设置过期时间
+          expiries: Date.now() + res.config.cacheTime, // 设置过期时间
         })
     }
     return res.data.resData;
@@ -69,7 +76,6 @@ class Instance {
   //用request又包一层
   //主要是为了对请求参数做处理，比如参数统一加时间戳
   public static async request(params:any):Promise<object>{
-    console.log(params)
     return await instance(params)
   }
   
@@ -78,7 +84,7 @@ class Instance {
     return this.request({...req,method:"GET",params:params});
   }
   public static post(req:any):Promise<object>{
-    console.log('req',req)
+    // console.log('req',req)
     const{data} = req
     return this.request({...req,method:"POST",data:Qs.stringify(data)||{}});
   }

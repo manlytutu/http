@@ -21,6 +21,16 @@ router.post('/goods',async(ctx)=>{
       }
   }));
 })
+router.post('/goods2',async(ctx)=>{
+  const req = ctx.request.body;
+  ctx.body = JSON.stringify(Mock.mock({
+      "code": 200,
+      "msg": "请求成功",
+      "resData": {
+        "stepCode": "03"
+      }
+  }));
+})
 app.use(router.routes());
 app.use(router.allowedMethods());
 
