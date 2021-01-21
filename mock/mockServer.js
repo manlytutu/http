@@ -17,7 +17,8 @@ router.post('/goods',async(ctx)=>{
       "code": 200,
       "msg": "请求成功",
       "resData": {
-        "stepCode": "02"
+        "stepCode": "02",
+        "mobi":'123232343434'
       }
   }));
 })
@@ -27,7 +28,10 @@ router.post('/goods2',async(ctx)=>{
       "code": 200,
       "msg": "请求成功",
       "resData": {
-        "stepCode": "03"
+        "stepCode": "03",
+        'name':"cici",
+        "age":'12',
+        "gender":"female"
       }
   }));
 })

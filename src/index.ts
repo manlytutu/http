@@ -3,6 +3,8 @@ import Qs from 'qs';
 import Storage from './storage'
 import CryptoHelper from './encryption'
 import { checkParams } from './checkParams';
+import { checkResponse } from './checkResponse';
+
 const storage = new Storage();
 const cryptoHelper = new CryptoHelper('cacheKey');
 
@@ -17,7 +19,8 @@ const instance = axios.create()
 instance.interceptors.request.use(function (req:Record<string,any>) {
   const source = axios.CancelToken.source();
   req.cancelToken = source.token
-  //todo 请求入参校验
+  
+  //done 请求入参校验
   var checkParamsFlag = checkParams(req);
   if(!checkParamsFlag){
     source.cancel()
@@ -54,8 +57,12 @@ instance.interceptors.request.use(function (req:Record<string,any>) {
 
 
 instance.interceptors.response.use(function (res:any) {
-  // console.log(3,res)
+  console.log(3,res)
   if(res.data && res.data.code ==200){
+    //todo 增加接口出参校验
+    checkResponse(res)
+
+
     if(res.config && res.config.cache){
         if(!res.config.cacheTime){
           res.config.cacheTime = 1000*3

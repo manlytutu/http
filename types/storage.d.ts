@@ -1,7 +1,7 @@
 declare class Storage {
-    get(key: string | undefined): any;
-    set(key: string | undefined, data: any): void;
-    remove(key: string | undefined): void;
+    set(realKeyObj: any, realValueObj: any): void;
+    get(realKey: any): any;
+    remove(realKeyObj: any): void;
 }
 export default Storage;
 //# sourceMappingURL=storage.d.ts.map
