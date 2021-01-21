@@ -34,6 +34,10 @@ instance.interceptors.request.use(function (req:Record<string,any>) {
       data: data.data,
     }));
   }
+  // if((Date.now() > data.experies)) {
+  //   console.log('清除缓存。');
+  //   storage.remove(cryptoHelper.encrypt(req.url + req.data + (req.method || '')));
+  // }
   
   return req;
 }, function (error: any) {
@@ -70,20 +74,21 @@ class Instance {
   }
   
   public static get(req: any):Promise<object>{
-    const{data,cache,cacheTime} = req
-    return this.request({...req,method:"GET",params:data,cache,cacheTime});
+    const{params} = req
+    return this.request({...req,method:"GET",params:params});
   }
   public static post(req:any):Promise<object>{
-    const{data,cache,cacheTime} = req
-    return this.request({...req,method:"POST",data:Qs.stringify(data)||{},cache,cacheTime});
+    console.log('req',req)
+    const{data} = req
+    return this.request({...req,method:"POST",data:Qs.stringify(data)||{}});
   }
   public static put(req:any):Promise<object>{
-    const{data,cache,cacheTime} = req
-    return this.request({...req,method:"PUT",data:data,cache,cacheTime});
+    const{data} = req
+    return this.request({...req,method:"PUT",data:data});
   }
   public static delete(req:any):Promise<object>{
-    const{data,cache,cacheTime} = req
-    return this.request({...req,method:"DELETE",data:data,cache,cacheTime});
+    const{data} = req
+    return this.request({...req,method:"DELETE",data:data});
   }
 }
 
