@@ -38,7 +38,6 @@ instance.interceptors.request.use(function (req:Record<string,any>) {
   let data
   if(req.cache){
     data = storage.get(cryptoHelper.encrypt(req.url + req.data + (req.method || '')));
-    // console.log(2,data)
   }
   //判断是否缓存命中，缓存是否过期
   if(data && (Date.now() <= data.expiries)){ //缓存未过期
@@ -57,18 +56,17 @@ instance.interceptors.request.use(function (req:Record<string,any>) {
 
 
 instance.interceptors.response.use(function (res:any) {
-  console.log(3,res)
   if(res.data && res.data.code ==200){
     //todo 增加接口出参校验
     checkResponse(res)
 
-
+    let storageData =(res.config.method=='get'?res.config.params:res.config.data)
     if(res.config && res.config.cache){
         if(!res.config.cacheTime){
           res.config.cacheTime = 1000*3
         }
-        storage.set(cryptoHelper.encrypt(res.config.url + res.config.data + (res.config.method || '')), {
-          data: res.data.resData, // 响应体数据
+        storage.set(cryptoHelper.encrypt(res.config.url + storageData + (res.config.method || '')), {
+          data: res.data, // 响应体数据
           expiries: Date.now() + res.config.cacheTime, // 设置过期时间
         })
     }
@@ -87,11 +85,10 @@ class Instance {
   }
   
   public static get(req: any):Promise<object>{
-    const{params} = req
-    return this.request({...req,method:"GET",params:params});
+    const{data} = req
+    return this.request({...req,method:"GET",params:data});
   }
   public static post(req:any):Promise<object>{
-    // console.log('req',req)
     const{data} = req
     return this.request({...req,method:"POST",data:Qs.stringify(data)||{}});
   }

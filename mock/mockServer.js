@@ -8,8 +8,14 @@ const router = new Router();
 app.use(cors());
 
 router.get('/', async (ctx) => {
-    ctx.type = 'html';
-    ctx.body = '<h1>hello world!</h1>';
+  ctx.body = JSON.stringify(Mock.mock({
+    "code": 200,
+    "msg": "请求成功",
+    "resData": {
+      "stepCode": "01",
+      "mobi":'get请求'
+    }
+  }));
 })
 router.post('/goods',async(ctx)=>{
   const req = ctx.request.body;

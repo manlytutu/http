@@ -9,19 +9,20 @@
   <script src="./dist/tuHttp.umd.js"></script>
   <script type="text/javascript">
     // console.log(tuHttp)
-    // tuHttp.Instance.get({
-    //   baseURL:'http://localhost:3000',
-    //   url: '/',
-    //   cache:false,
-    //   params:{
-    //     'haha':'111'
-    //   }
-    // }).then(function(res){
-    //   return res
-    // }).catch(function(err){
-    //   return err
-    // })
-
+    tuHttp.Instance.get({
+      baseURL:'http://localhost:3000',
+      url: '/',
+      cache:false,
+      // cacheTime:1000*3,//缓存3秒
+      data:{
+        'haha':'111'
+      }
+    }).then(function(res){
+      return res
+    }).catch(function(err){
+      return err
+    })
+    
 
 
     tuHttp.Instance.post({
